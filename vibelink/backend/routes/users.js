@@ -1,15 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, getUser, updateProfile, changePassword } = require('../controllers/userController');
+const {
+  getUsers,
+  getUser,
+  updateUser,
+  deleteUser,
+  getProfile,
+  updateProfile,
+  changePassword
+} = require('../controllers/userController');
 const { protect } = require('../middleware/auth');
 
-// Protect all routes in this router
-router.use(protect);
+// Profile routes
+router.get('/profile', protect, getProfile);
+router.put('/profile', protect, updateProfile);
+
+// Admin routes
+router.route('/')
+  .get(protect, getUsers);
+
+router.route('/:id')
+  .get(protect, getUser)
+  .put(protect, updateUser)
+  .delete(protect, deleteUser);
 
 // User routes
-router.get('/', getUsers);
-router.get('/:id', getUser);
-router.put('/profile', updateProfile);
-router.put('/changepassword', changePassword);
+router.put('/changepassword', protect, changePassword);
 
 module.exports = router;

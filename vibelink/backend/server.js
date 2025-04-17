@@ -8,6 +8,7 @@ require('dotenv').config();
 // Route imports
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
+const eventRoutes = require('./routes/events');
 
 // Initialize express app
 const app = express();
@@ -15,14 +16,25 @@ const app = express();
 // Connect to database
 connectDB();
 
+// CORS configuration
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL 
+    : 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(morgan('dev'));
 
 // Define Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/events', eventRoutes);
 
 // Home route
 app.get('/', (req, res) => {
